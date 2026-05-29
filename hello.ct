@@ -1,0 +1,48 @@
+// Cricket basics - https://github.com/RyanBrewer317/cricket_rs
+// Run from cricket_rs dir: .\target\release\cricket_rs.exe hello.ct
+
+import stdlib/List
+
+// def always uses ':', not '='
+def greet(name): "Hello, " + name + "!"
+
+// Lambdas use '->'
+def add: x-> y-> x + y
+
+def double: x-> x * 2
+
+// Objects - immutable prototypal OOP, no classes
+def object_demo:
+  let dog = {bark: "woof!"}
+  in let cooper = dog <- name: "Cooper"   // <- with-operator: new object with field changed
+  in console.write(cooper.name + " says: " + cooper.bark)
+
+// ADT pattern matching via .case{}
+def list_demo:
+  let nums = List[10, 20, 30]   // sugar for Has(10)(Has(20)(Has(30)(Empty)))
+  in nums.case{
+    Empty: 0,
+    this.Has(first)(rest):
+      let force _ = console.write(first)
+      in rest.case(this)   // recurse by passing this same case object
+  }
+
+// Backpassing: let x <- f in e  desugars to  f(x-> e)
+def backpassing_demo:
+  let x <- f-> f("Cricket is cool!")
+  in console.write(x)
+
+// Laziness: code not affecting the result won't run.
+// 'let force' ensures a side-effecting expression executes.
+def laziness_demo:
+  let force _ = console.write("forced: runs")
+  in let _ = console.write("lazy: won't run")
+  in console.write("done")
+
+def main:
+  let force _ = console.write(greet("World"))
+  in let force _ = object_demo
+  in let force _ = list_demo
+  in let force _ = backpassing_demo
+  in let force _ = laziness_demo
+  in console.write("All done!")
